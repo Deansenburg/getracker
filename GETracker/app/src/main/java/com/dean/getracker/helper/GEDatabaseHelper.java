@@ -1,10 +1,12 @@
-package com.dean.getracker;
+package com.dean.getracker.helper;
 
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
+
+import com.dean.getracker.model.GEEntry;
 
 import java.util.ArrayList;
 

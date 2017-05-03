@@ -1,4 +1,4 @@
-package com.dean.getracker;
+package com.dean.getracker.model;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -36,7 +36,7 @@ public class GEEntry {
     {
         return value;
     }
-    public long getLongDate(){return  longDate;}
+    public long LongDate(){return  longDate;}
 
     @Override
     public String toString() {

@@ -1,16 +1,27 @@
-package com.dean.getracker;
+package com.dean.getracker.controller;
 
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.graphics.PointF;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+
+import com.dean.getracker.R;
+import com.dean.getracker.helper.GEDatabaseHelper;
+import com.dean.getracker.model.GEEntry;
+import com.dean.getracker.view.GraphView;
+import com.dean.getracker.view.decorations.graph.IGraphDecoration;
+import com.dean.getracker.view.decorations.graph.basicBackground;
+import com.dean.getracker.view.decorations.line.ILineDecoration;
+import com.dean.getracker.view.decorations.line.basicLine;
+import com.dean.getracker.view.decorations.node.INodeDecoration;
+import com.dean.getracker.view.decorations.node.basicNode;
 
 import java.util.ArrayList;
 
@@ -23,7 +34,7 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
     Cursor cursor;
 
     GraphView view;
-    GEGraphModel model;
+    GEGraphController model;
 
     PointF lastTouch;
 
@@ -56,7 +67,15 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
 //            }
 //        }
 
+        IGraphDecoration graphDecoration = new basicBackground(Color.WHITE, null);
+
+        ILineDecoration lineDecoration = new basicLine(Color.BLACK, null);
+
+        INodeDecoration nodeDecoration = new basicNode(Color.BLUE, null);
+
         model = readFromDatabase();
+
+        view.setupRendering(graphDecoration, lineDecoration, nodeDecoration);
         view.updateModel(model);
         view.setOnTouchListener(this);
     }
@@ -71,7 +90,7 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
         db.insert(GEDatabaseHelper.ReadColumns.TABLE_NAME, null, values);
     }
 
-    private GEGraphModel readFromDatabase()
+    private GEGraphController readFromDatabase()
     {
         ArrayList<GEEntry> entries = new ArrayList<GEEntry>();
 
@@ -79,7 +98,7 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
         entries = helper.executeQuery(db,
                 "select * from " + GEDatabaseHelper.ReadColumns.TABLE_NAME
                         +" order by date("+ GEDatabaseHelper.ReadColumns.COLUMN_NAME_Date+")");
-        GEGraphModel model = new GEGraphModel();
+        GEGraphController model = new GEGraphController();
         model.setModel(entries);
         return model;
     }
@@ -116,14 +135,10 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
                 if (dx > 0)
                 {
                     model.move(1);
-//                    view.move(1);
-                    Log.d("", "adding");
                 }
                 else
                 {
                     model.move(-1);
-//                    view.move(-1);
-                    Log.d("", "subbing");
                 }
                 view.invalidate();
             }
