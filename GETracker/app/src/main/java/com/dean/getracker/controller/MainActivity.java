@@ -13,9 +13,9 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.dean.getracker.R;
-import com.dean.getracker.helper.GEDatabaseHelper;
-import com.dean.getracker.model.GEEntry;
-import com.dean.getracker.view.GraphView;
+import com.dean.getracker.helper.geDatabaseHelper;
+import com.dean.getracker.model.geEntry;
+import com.dean.getracker.view.graphView;
 import com.dean.getracker.view.decorations.graph.IGraphDecoration;
 import com.dean.getracker.view.decorations.graph.basicBackground;
 import com.dean.getracker.view.decorations.line.ILineDecoration;
@@ -26,15 +26,15 @@ import com.dean.getracker.view.decorations.node.basicNode;
 import java.util.ArrayList;
 
 
-public class MainActivity extends ActionBarActivity implements View.OnTouchListener {
+public class mainActivity extends ActionBarActivity implements View.OnTouchListener {
 
     SQLiteDatabase db;
-    GEDatabaseHelper helper;
+    geDatabaseHelper helper;
 
     Cursor cursor;
 
-    GraphView view;
-    GEGraphController model;
+    graphView view;
+    geGraphController controller;
 
     PointF lastTouch;
 
@@ -43,24 +43,10 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        helper = new GEDatabaseHelper(getApplicationContext());
+        helper = new geDatabaseHelper(getApplicationContext());
         db = helper.getWritableDatabase();
 
-        view = (GraphView)findViewById(R.id.view);
-//
-//        int day = 1, month = 1, year = 2017;
-//        double angle = 0;
-//        while(month < 12)
-//        {
-//            addToDB(year+"/"+month+"/"+day, (int)(Math.sin(angle)*100) + 150);
-//            angle+=0.1;
-//            day+= 3;
-//            if (day >= 25)
-//            {
-//                day = 1;
-//                month += 1;
-//            }
-//        }
+        view = (graphView)findViewById(R.id.view);
 
         IGraphDecoration graphDecoration = new basicBackground(Color.WHITE, null);
 
@@ -68,34 +54,62 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
 
         INodeDecoration nodeDecoration = new basicNode(Color.BLUE, null);
 
-        model = readFromDatabase();
+        createData(geDatabaseHelper.ReadColumns.TABLE_NAME_E, 0);
+        createData(geDatabaseHelper.ReadColumns.TABLE_NAME_G, Math.PI/2);
+
+        controller = readFromDatabase();
 
         view.setupRendering(graphDecoration, lineDecoration, nodeDecoration);
-        view.updateModel(model);
+        view.setModel(controller.getModels());
         view.setOnTouchListener(this);
     }
 
-    private void addToDB(String date, int value)
+    private void createData(String table, double angle)
+    {
+        int day = 1, month = 1, year = 2017;
+
+        while(month < 12)
+        {
+            addToDB(table,
+                    year + "/" + month + "/" + day,
+                    (int) (Math.sin(angle) * 100) + 150);
+            angle+=0.1;
+            day+= 3;
+            if (day >= 25)
+            {
+                day = 1;
+                month += 1;
+            }
+        }
+    }
+
+    private void addToDB(String name, String date, int value)
     {
         db = helper.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(GEDatabaseHelper.ReadColumns.COLUMN_NAME_Date, date);
-        values.put(GEDatabaseHelper.ReadColumns.COLUMN_NAME_Value, value);
+        values.put(geDatabaseHelper.ReadColumns.COLUMN_NAME_Date, date);
+        values.put(geDatabaseHelper.ReadColumns.COLUMN_NAME_Value, value);
 
-        db.insert(GEDatabaseHelper.ReadColumns.TABLE_NAME, null, values);
+        db.insert(name, null, values);
     }
 
-    private GEGraphController readFromDatabase()
+    private geGraphController readFromDatabase()
     {
-        ArrayList<GEEntry> entries = new ArrayList<GEEntry>();
+        ArrayList<geEntry> entries = new ArrayList<geEntry>();
+
+        geGraphController controller = new geGraphController();
 
         db = helper.getReadableDatabase();
         entries = helper.executeQuery(db,
-                "select * from " + GEDatabaseHelper.ReadColumns.TABLE_NAME
-                        +" order by date("+ GEDatabaseHelper.ReadColumns.COLUMN_NAME_Date+")");
-        GEGraphController model = new GEGraphController();
-        model.setModel(entries);
-        return model;
+                "select * from " + geDatabaseHelper.ReadColumns.TABLE_NAME_E
+                        +" order by date("+ geDatabaseHelper.ReadColumns.COLUMN_NAME_Date+")");
+        controller.addModel(entries);
+
+        entries = helper.executeQuery(db,
+                "select * from " + geDatabaseHelper.ReadColumns.TABLE_NAME_G
+                        +" order by date("+ geDatabaseHelper.ReadColumns.COLUMN_NAME_Date+")");
+        controller.addModel(entries);
+        return controller;
     }
 
     @Override
@@ -129,11 +143,11 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
                 float dx = lastTouch.x - event.getX();
                 if (dx > 0)
                 {
-                    model.move(1);
+                    controller.move(1);
                 }
                 else
                 {
-                    model.move(-1);
+                    controller.move(-1);
                 }
                 view.invalidate();
             }

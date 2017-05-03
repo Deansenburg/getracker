@@ -7,14 +7,14 @@ import java.util.Date;
 /**
  * Created by Dean on 31/03/17.
  */
-public class GEEntry {
+public class geEntry {
 
     private String date;
     private Date parsedDate;
     private int value;
     private long longDate;
 
-    public GEEntry(String date, int value)
+    public geEntry(String date, int value)
     {
         this.date = date;
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy");

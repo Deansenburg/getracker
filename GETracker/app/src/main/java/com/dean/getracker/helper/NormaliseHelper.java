@@ -3,7 +3,7 @@ package com.dean.getracker.helper;
 /**
  * Created by Dean on 03/05/17.
  */
-public class NormaliseHelper {
+public class normaliseHelper {
     public static float norm(float x, float max, float min)
     {
         return (x - min) / (max - min);
