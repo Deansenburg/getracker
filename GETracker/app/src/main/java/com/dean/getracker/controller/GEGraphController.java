@@ -20,7 +20,7 @@ public class GEGraphController {
 
     long month = 1000 * 60 * 60 * 60 * 24 * 30;
 
-    public long size = month * 24;
+    public long width = month * 24;
     public long position = 0;
 
     public GEGraphController()
@@ -45,21 +45,17 @@ public class GEGraphController {
 
     private void normaliseDate()
     {
-        minDate = position - (size/2);
-        maxDate = position + (size/2);
+        minDate = position - (width /2);
+        maxDate = position + (width /2);
     }
 
     private void normaliseValue()
     {
-        int low = Integer.MAX_VALUE, high = Integer.MIN_VALUE;
+        int low = 0, high = 0;
         for (GEEntry e:mEntries) {
-            if (e.Value() < low)
+            while (e.Value() > high)
             {
-                low = e.Value();
-            }
-            if (e.Value() > high)
-            {
-                high = e.Value();
+                high += 50;
             }
         }
         maxValue = high;
@@ -69,7 +65,7 @@ public class GEGraphController {
     public void move(int direction)
     {
         position += direction*(month);
-        Log.d("Position", position+"");
+        //Log.d("Position", position+"");
     }
 
     public ArrayList<PointF> getPoints()
@@ -78,14 +74,14 @@ public class GEGraphController {
         for (GEEntry e:mEntries)
         {
             long date = e.LongDate();
-            if (date > (position-size) && date < (position+size))
+            if (date > (position- width) && date < (position+ width))
             {
                 float x, y;
 
                 normaliseDate();
                 x = NormaliseHelper.norm(date, maxDate, minDate);
 
-                y = NormaliseHelper.norm(e.Value(), maxValue, minValue);
+                y = 1 - NormaliseHelper.norm(e.Value(), maxValue, minValue);
                 points.add(new PointF(x, y));
             }
         }

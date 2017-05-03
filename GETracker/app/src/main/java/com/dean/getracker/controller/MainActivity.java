@@ -47,19 +47,14 @@ public class MainActivity extends ActionBarActivity implements View.OnTouchListe
         db = helper.getWritableDatabase();
 
         view = (GraphView)findViewById(R.id.view);
-
-//        addToDB("01/01/2017", 10);
-//        addToDB("01/02/2017", 20);
-//        addToDB("01/03/2017", 30);
-//        addToDB("01/04/2017", 40);
-
+//
 //        int day = 1, month = 1, year = 2017;
 //        double angle = 0;
 //        while(month < 12)
 //        {
-//            addToDB(year+"/"+month+"/"+day, (int)(Math.sin(angle)*100));
-//            angle+=0.01;
-//            day+= 5;
+//            addToDB(year+"/"+month+"/"+day, (int)(Math.sin(angle)*100) + 150);
+//            angle+=0.1;
+//            day+= 3;
 //            if (day >= 25)
 //            {
 //                day = 1;
