@@ -1,7 +1,6 @@
 package com.dean.getracker.controller;
 
 import android.content.ContentValues;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.PointF;
@@ -15,13 +14,13 @@ import android.view.View;
 import com.dean.getracker.R;
 import com.dean.getracker.helper.geDatabaseHelper;
 import com.dean.getracker.model.geEntry;
-import com.dean.getracker.view.graphView;
 import com.dean.getracker.view.decorations.graph.IGraphDecoration;
 import com.dean.getracker.view.decorations.graph.basicBackground;
 import com.dean.getracker.view.decorations.line.ILineDecoration;
 import com.dean.getracker.view.decorations.line.basicLine;
 import com.dean.getracker.view.decorations.node.INodeDecoration;
 import com.dean.getracker.view.decorations.node.basicNode;
+import com.dean.getracker.view.graphView;
 
 import java.util.ArrayList;
 
@@ -31,17 +30,18 @@ public class mainActivity extends ActionBarActivity implements View.OnTouchListe
     SQLiteDatabase db;
     geDatabaseHelper helper;
 
-    Cursor cursor;
-
     graphView view;
     geGraphController controller;
 
     PointF lastTouch;
 
+    int sensitivity = 10;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        sensitivity = sensitivity*sensitivity;
 
         helper = new geDatabaseHelper(getApplicationContext());
         db = helper.getWritableDatabase();
@@ -54,14 +54,15 @@ public class mainActivity extends ActionBarActivity implements View.OnTouchListe
 
         INodeDecoration nodeDecoration = new basicNode(Color.BLUE, null);
 
-        createData(geDatabaseHelper.ReadColumns.TABLE_NAME_E, 0);
-        createData(geDatabaseHelper.ReadColumns.TABLE_NAME_G, Math.PI/2);
+//        createData(geDatabaseHelper.ReadColumns.TABLE_NAME_E, 0);
+//        createData(geDatabaseHelper.ReadColumns.TABLE_NAME_G, Math.PI/2);
 
         controller = readFromDatabase();
 
         view.setupRendering(graphDecoration, lineDecoration, nodeDecoration);
         view.setModel(controller.getModels());
         view.setOnTouchListener(this);
+        view.invalidate();
     }
 
     private void createData(String table, double angle)
@@ -137,8 +138,8 @@ public class mainActivity extends ActionBarActivity implements View.OnTouchListe
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         if (lastTouch != null) {
-            double d = Math.sqrt(Math.pow(lastTouch.x - event.getX(), 2));
-            if (d > 25)
+            double d = Math.pow(lastTouch.x - event.getX(), 2);
+            if (d > sensitivity)
             {
                 float dx = lastTouch.x - event.getX();
                 if (dx > 0)

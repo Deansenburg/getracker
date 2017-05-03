@@ -20,19 +20,17 @@ public class geGraphController {
     public long width = month * 24;
     public long position = 0;
 
-    public geGraphController()
-    {
-    }
-
     public void addModel(ArrayList<geEntry> entries)
     {
-        models.add(new geModel(entries));
+        geModel m = new geModel(entries);
+        models.add(m);
 
         for (geEntry e:entries)
         {
             Log.d("DEBUG", e.toString());
         }
         jumpToLast();
+        m.update(position, width);
     }
 
     private void jumpToLast()
@@ -49,13 +47,18 @@ public class geGraphController {
         }
     }
 
-    public void move(int direction)
+    private void update()
     {
-        position += direction*(month);
         for (geModel model:models)
         {
             model.update(position, width);
         }
+    }
+
+    public void move(int direction)
+    {
+        position += direction*(month);
+        update();
     }
 
     public List<geModel> getModels()
