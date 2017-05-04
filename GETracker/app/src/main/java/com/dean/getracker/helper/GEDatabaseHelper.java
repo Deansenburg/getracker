@@ -1,10 +1,12 @@
 package com.dean.getracker.helper;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
+import android.util.Log;
 
 import com.dean.getracker.model.geEntry;
 
@@ -22,7 +24,7 @@ public class geDatabaseHelper extends SQLiteOpenHelper {
         public static final String TABLE_NAME_E = "eReadings";
         public static final String TABLE_NAME_G = "gReadings";
         public static final String COLUMN_NAME_Date = "date";
-        public static final String COLUMN_NAME_Value = "subtitle";
+        public static final String COLUMN_NAME_Value = "value";
     }
 
     private static final String SQL_CREATE_E_TABLE =
@@ -86,5 +88,29 @@ public class geDatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_DELETE_E_ENTRIES);
         db.execSQL(SQL_DELETE_G_ENTRIES);
         onCreate(db);
+    }
+
+    public void addToDB(SQLiteDatabase db, String name, String date, int value)
+    {
+        ContentValues values = new ContentValues();
+        values.put(geDatabaseHelper.ReadColumns.COLUMN_NAME_Date, date);
+        values.put(geDatabaseHelper.ReadColumns.COLUMN_NAME_Value, value);
+
+        db.insert(name, null, values);
+    }
+    public void replaceInDB(SQLiteDatabase db, String name, String date, int value)
+    {
+        String sql = "Update %s set %s = '%s' where %s = '%s'";
+        sql = String.format(sql, name, geDatabaseHelper.ReadColumns.COLUMN_NAME_Value, value,
+                geDatabaseHelper.ReadColumns.COLUMN_NAME_Date, date);
+        Log.d("sql", sql);
+        db.execSQL(sql);
+    }
+    public void deleteInDB(SQLiteDatabase db, String name, String date, int value)
+    {
+        String sql = "Delete from %s where %s = '%s'";
+        sql = String.format(sql, name, geDatabaseHelper.ReadColumns.COLUMN_NAME_Date, date);
+        Log.d("sql", sql);
+        db.execSQL(sql);
     }
 }

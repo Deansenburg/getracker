@@ -17,7 +17,7 @@ public class geEntry {
     public geEntry(String date, int value)
     {
         this.date = date;
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yy");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         try {
             this.parsedDate = sdf.parse(date);
         } catch (ParseException e) {

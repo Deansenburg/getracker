@@ -1,6 +1,5 @@
 package com.dean.getracker.controller;
 
-import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.PointF;
@@ -13,7 +12,7 @@ import android.view.View;
 
 import com.dean.getracker.R;
 import com.dean.getracker.helper.geDatabaseHelper;
-import com.dean.getracker.model.geEntry;
+import com.dean.getracker.helper.geModelHelper;
 import com.dean.getracker.view.decorations.graph.IGraphDecoration;
 import com.dean.getracker.view.decorations.graph.basicBackground;
 import com.dean.getracker.view.decorations.line.ILineDecoration;
@@ -22,10 +21,8 @@ import com.dean.getracker.view.decorations.node.INodeDecoration;
 import com.dean.getracker.view.decorations.node.basicNode;
 import com.dean.getracker.view.graphView;
 
-import java.util.ArrayList;
 
-
-public class mainActivity extends ActionBarActivity implements View.OnTouchListener {
+public class graphActivity extends ActionBarActivity implements View.OnTouchListener {
 
     SQLiteDatabase db;
     geDatabaseHelper helper;
@@ -57,7 +54,8 @@ public class mainActivity extends ActionBarActivity implements View.OnTouchListe
 //        createData(geDatabaseHelper.ReadColumns.TABLE_NAME_E, 0);
 //        createData(geDatabaseHelper.ReadColumns.TABLE_NAME_G, Math.PI/2);
 
-        controller = readFromDatabase();
+        geModelHelper h = new geModelHelper(db, helper);
+        controller = h.createFromDatabase();
 
         view.setupRendering(graphDecoration, lineDecoration, nodeDecoration);
         view.setModel(controller.getModels());
@@ -69,9 +67,10 @@ public class mainActivity extends ActionBarActivity implements View.OnTouchListe
     {
         int day = 1, month = 1, year = 2017;
 
+        geModelHelper h = new geModelHelper(db, helper);
         while(month < 12)
         {
-            addToDB(table,
+            helper.addToDB(db, table,
                     year + "/" + month + "/" + day,
                     (int) (Math.sin(angle) * 100) + 150);
             angle+=0.1;
@@ -82,35 +81,6 @@ public class mainActivity extends ActionBarActivity implements View.OnTouchListe
                 month += 1;
             }
         }
-    }
-
-    private void addToDB(String name, String date, int value)
-    {
-        db = helper.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(geDatabaseHelper.ReadColumns.COLUMN_NAME_Date, date);
-        values.put(geDatabaseHelper.ReadColumns.COLUMN_NAME_Value, value);
-
-        db.insert(name, null, values);
-    }
-
-    private geGraphController readFromDatabase()
-    {
-        ArrayList<geEntry> entries = new ArrayList<geEntry>();
-
-        geGraphController controller = new geGraphController();
-
-        db = helper.getReadableDatabase();
-        entries = helper.executeQuery(db,
-                "select * from " + geDatabaseHelper.ReadColumns.TABLE_NAME_E
-                        +" order by date("+ geDatabaseHelper.ReadColumns.COLUMN_NAME_Date+")");
-        controller.addModel(entries);
-
-        entries = helper.executeQuery(db,
-                "select * from " + geDatabaseHelper.ReadColumns.TABLE_NAME_G
-                        +" order by date("+ geDatabaseHelper.ReadColumns.COLUMN_NAME_Date+")");
-        controller.addModel(entries);
-        return controller;
     }
 
     @Override
