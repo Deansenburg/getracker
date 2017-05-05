@@ -53,6 +53,7 @@ public class BasicAxis extends baseGraphDecoration{
         String s = f.format(d);
         int offset = helper.translateToScreen(0, 0.03f).y;
         c.drawText(s, p.x, p.y+offset, textColor);
+//        c.drawCircle(p.x, p.y+offset, 5, textColor);
     }
 
     @Override
@@ -79,8 +80,12 @@ public class BasicAxis extends baseGraphDecoration{
 
         Calendar calendar = new GregorianCalendar();
         calendar.setTime(minDate);
-        while(calendar.getTimeInMillis() < axis.MaxXAxis())
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        SimpleDateFormat f = new SimpleDateFormat("dd/MM/yyyy");
+        long cur;
+        while((cur = calendar.getTimeInMillis()) < axis.MaxXAxis())
         {
+            String s = f.format(new Date(cur));
             drawAtXAxis(c, axis, helper, calendar.getTimeInMillis());
             calendar.add(Calendar.MONTH, 1);
         }

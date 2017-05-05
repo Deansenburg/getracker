@@ -17,6 +17,7 @@ public class geModel {
     int maxValue, minValue;
 
     int maxValueTotal, minValueTotal;
+    long maxDateTotal, minDateTotal;
 
     long position, width;
 
@@ -30,6 +31,7 @@ public class geModel {
     {
         position = pos;
         this.width = width;
+        normaliseDate();
     }
 
 
@@ -68,11 +70,32 @@ public class geModel {
         }
         return val;
     }
+    public long higherDate(long date)
+    {
+        if (maxDate > date)
+        {
+            return maxDate;
+        }
+        return date;
+    }
+    public long lowerDate(long date)
+    {
+        if (minDate < date)
+        {
+            return minDate;
+        }
+        return date;
+    }
 
     public void setMaxValues(int min, int max)
     {
         minValueTotal = min;
         maxValueTotal = max;
+    }
+    public void setMaxDates(long min, long max)
+    {
+        minDateTotal = min;
+        maxDateTotal = max;
     }
 
     public ArrayList<PointF> getPoints()
@@ -84,9 +107,7 @@ public class geModel {
             if (date > (position- width) && date < (position+ width))
             {
                 float x, y;
-
-                normaliseDate();
-                x = normaliseHelper.norm(date, maxDate, minDate);
+                x = normaliseHelper.norm(date, maxDateTotal, minDateTotal);
 
                 y = 1 - normaliseHelper.norm(e.Value(), maxValueTotal, minValueTotal);
                 points.add(new PointF(x, y));
