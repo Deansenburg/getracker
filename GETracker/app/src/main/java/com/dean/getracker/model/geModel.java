@@ -16,6 +16,8 @@ public class geModel {
     long maxDate, minDate;
     int maxValue, minValue;
 
+    int maxValueTotal, minValueTotal;
+
     long position, width;
 
     public geModel(ArrayList<geEntry> e)
@@ -41,13 +43,36 @@ public class geModel {
     {
         int low = 0, high = 0;
         for (geEntry e:entries) {
-            while (e.Value() > high)
+            while (e.Value() >= high)
             {
                 high += 50;
             }
         }
         maxValue = high;
         minValue = low;
+    }
+
+    public int lowerValue(int val)
+    {
+        if (minValue < val)
+        {
+            return minValue;
+        }
+        return val;
+    }
+    public int higherValue(int val)
+    {
+        if (maxValue > val)
+        {
+            return maxValue;
+        }
+        return val;
+    }
+
+    public void setMaxValues(int min, int max)
+    {
+        minValueTotal = min;
+        maxValueTotal = max;
     }
 
     public ArrayList<PointF> getPoints()
@@ -63,7 +88,7 @@ public class geModel {
                 normaliseDate();
                 x = normaliseHelper.norm(date, maxDate, minDate);
 
-                y = 1 - normaliseHelper.norm(e.Value(), maxValue, minValue);
+                y = 1 - normaliseHelper.norm(e.Value(), maxValueTotal, minValueTotal);
                 points.add(new PointF(x, y));
             }
         }
@@ -73,6 +98,12 @@ public class geModel {
     public List<geEntry> getEntries()
     {
         return entries;
+    }
+
+    public axisInformation getAxisInfo()
+    {
+        axisInformation axis = new axisInformation(minDate, maxDate, minValueTotal, maxValueTotal);
+        return axis;
     }
 
 }

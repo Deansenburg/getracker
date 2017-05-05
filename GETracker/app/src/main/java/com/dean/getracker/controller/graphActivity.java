@@ -11,8 +11,9 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.dean.getracker.R;
+import com.dean.getracker.binder.geControllerBinder;
 import com.dean.getracker.helper.geDatabaseHelper;
-import com.dean.getracker.helper.geModelHelper;
+import com.dean.getracker.view.decorations.graph.BasicAxis;
 import com.dean.getracker.view.decorations.graph.IGraphDecoration;
 import com.dean.getracker.view.decorations.graph.basicBackground;
 import com.dean.getracker.view.decorations.line.ILineDecoration;
@@ -37,50 +38,27 @@ public class graphActivity extends ActionBarActivity implements View.OnTouchList
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
         sensitivity = sensitivity*sensitivity;
 
-        helper = new geDatabaseHelper(getApplicationContext());
-        db = helper.getWritableDatabase();
-
         view = (graphView)findViewById(R.id.view);
 
-        IGraphDecoration graphDecoration = new basicBackground(Color.WHITE, null);
+        IGraphDecoration graphDecoration = new BasicAxis(new basicBackground(Color.WHITE, null));
 
         ILineDecoration lineDecoration = new basicLine(Color.BLACK, null);
 
         INodeDecoration nodeDecoration = new basicNode(Color.BLUE, null);
 
-//        createData(geDatabaseHelper.ReadColumns.TABLE_NAME_E, 0);
-//        createData(geDatabaseHelper.ReadColumns.TABLE_NAME_G, Math.PI/2);
+        Bundle graphBundle = getIntent().getExtras().getBundle(getString(R.string.extras_graphBundle));
+        geControllerBinder controllerBinder = (geControllerBinder) graphBundle.getBinder(getString(R.string.extras_graphBinder));
 
-        geModelHelper h = new geModelHelper(db, helper);
-        controller = h.createFromDatabase();
+        controller = controllerBinder.getService();
 
         view.setupRendering(graphDecoration, lineDecoration, nodeDecoration);
         view.setModel(controller.getModels());
         view.setOnTouchListener(this);
         view.invalidate();
-    }
-
-    private void createData(String table, double angle)
-    {
-        int day = 1, month = 1, year = 2017;
-
-        geModelHelper h = new geModelHelper(db, helper);
-        while(month < 12)
-        {
-            helper.addToDB(db, table,
-                    year + "/" + month + "/" + day,
-                    (int) (Math.sin(angle) * 100) + 150);
-            angle+=0.1;
-            day+= 3;
-            if (day >= 25)
-            {
-                day = 1;
-                month += 1;
-            }
-        }
     }
 
     @Override
@@ -92,13 +70,10 @@ public class graphActivity extends ActionBarActivity implements View.OnTouchList
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_input) {
+            finish();
             return true;
         }
 

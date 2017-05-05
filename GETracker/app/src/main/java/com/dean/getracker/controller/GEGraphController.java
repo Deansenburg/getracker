@@ -49,9 +49,16 @@ public class geGraphController {
 
     private void update()
     {
+        int min = Integer.MAX_VALUE, max = 0;
         for (geModel model:models)
         {
             model.update(position, width);
+            min = model.lowerValue(min);
+            max = model.higherValue(max);
+        }
+        for (geModel model:models)
+        {
+            model.setMaxValues(min, max);
         }
     }
 

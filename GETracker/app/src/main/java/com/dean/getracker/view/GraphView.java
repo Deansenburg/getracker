@@ -6,6 +6,8 @@ import android.graphics.PointF;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.dean.getracker.helper.ViewHelper;
+import com.dean.getracker.model.axisInformation;
 import com.dean.getracker.model.geModel;
 import com.dean.getracker.view.decorations.graph.IGraphDecoration;
 import com.dean.getracker.view.decorations.line.ILineDecoration;
@@ -53,8 +55,13 @@ public class graphView extends View {
             int width = getWidth();
             int height = getHeight();
 
+            ViewHelper helper = new ViewHelper(width, height);
+
+            geModel m = models.get(0);
+            axisInformation axis = m.getAxisInfo();
+
             //graph rendering
-            graphDecorator.render(canvas);
+            graphDecorator.render(canvas, axis, helper);
             //line rendering
             for (geModel model:models) {
                 PointF lastPoint = null;

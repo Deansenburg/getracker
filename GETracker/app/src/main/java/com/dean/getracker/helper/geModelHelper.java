@@ -44,5 +44,23 @@ public class geModelHelper {
         return controller;
     }
 
+    private void createData(String table, double angle)
+    {
+        int day = 1, month = 1, year = 2017;
 
+        geModelHelper h = new geModelHelper(db, helper);
+        while(month < 12)
+        {
+            helper.addToDB(db, table,
+                    year + "/" + month + "/" + day,
+                    (int) (Math.sin(angle) * 100) + 150);
+            angle+=0.1;
+            day+= 3;
+            if (day >= 25)
+            {
+                day = 1;
+                month += 1;
+            }
+        }
+    }
 }

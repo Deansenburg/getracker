@@ -3,7 +3,13 @@
 
     <string name="app_name">GETracker</string>
     <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_graphPage">Graph</string>
+    <string name="action_inputPage">Input</string>
     <string name="title_activity_input">inputActivity</string>
 
+    <string name="extras_graphBinder">GraphBinder</string>
+    <string name="extras_graphBundle">GraphBundle</string>
+
+
 </resources>
+

@@ -1,14 +1,17 @@
 package com.dean.getracker.controller;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -16,6 +19,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import com.dean.getracker.R;
+import com.dean.getracker.binder.geControllerBinder;
 import com.dean.getracker.helper.geDatabaseHelper;
 import com.dean.getracker.helper.geModelHelper;
 import com.dean.getracker.model.geEntry;
@@ -83,19 +87,32 @@ public class inputActivity extends ActionBarActivity {
         }
     };
 
+    AdapterView.OnItemClickListener itemOnClick = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            dateText.setText(listAdapter.getItem(position).split(" : ")[0]);
+            checkDate();
+            checkValue();
+            checkAddButton();
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_input);
 
         readingsView = (ListView) findViewById(R.id.readingListView);
+        readingsView.setOnItemClickListener(itemOnClick);
+
         gBtn = (Button) findViewById(R.id.buttonG);
         eBtn = (Button) findViewById(R.id.buttonE);
         dateText = (EditText) findViewById(R.id.dateEditText);
-        numberText = (EditText) findViewById(R.id.valueEditText);
-        addBtn = (Button) findViewById(R.id.addButton);
 
+        numberText = (EditText) findViewById(R.id.valueEditText);
         numberText.addTextChangedListener(addButtonWatcher);
+
+        addBtn = (Button) findViewById(R.id.addButton);
 
         helper = new geDatabaseHelper(getApplicationContext());
         db = helper.getWritableDatabase();
@@ -281,13 +298,18 @@ public class inputActivity extends ActionBarActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_graph) {
+            Intent i = new Intent(inputActivity.this, graphActivity.class);
+
+
+            IBinder conBinder = new geControllerBinder(controller);
+            Bundle b = new Bundle();
+            b.putBinder(getString(R.string.extras_graphBinder), conBinder);
+            i.putExtra(getString(R.string.extras_graphBundle), b);
+
+            startActivity(i);
             return true;
         }
 
