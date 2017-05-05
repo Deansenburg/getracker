@@ -4,10 +4,15 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
-import android.graphics.Rect;
 
 import com.dean.getracker.helper.ViewHelper;
+import com.dean.getracker.helper.normaliseHelper;
 import com.dean.getracker.model.axisInformation;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 /**
  * Created by Dean on 05/05/17.
@@ -18,9 +23,7 @@ public class BasicAxis extends baseGraphDecoration{
 
     Paint textColor;
 
-    int vMarks = 5, hMarks = 5;
-
-    private final Rect textBounds = new Rect();
+    int vMarks = 5;
 
     public BasicAxis(IGraphDecoration dec) {
         super(dec);
@@ -32,6 +35,24 @@ public class BasicAxis extends baseGraphDecoration{
         textColor = new Paint();
         textColor.setColor(Color.BLACK);
         textColor.setTextSize(72);
+    }
+
+    private void drawAtYAxis(Canvas c, axisInformation axis, ViewHelper helper, int value)
+    {
+        float y = 1 - normaliseHelper.norm(value, axis.MaxYAxis(), axis.MinYAxis());
+        Point p = helper.translateToScreen(0.1f, y);
+        c.drawText(value+"", p.x, p.y, textColor);
+    }
+
+    private void drawAtXAxis(Canvas c, axisInformation axis, ViewHelper helper, long value)
+    {
+        float x = normaliseHelper.norm(value, axis.MaxXAxis(), axis.MinXAxis());
+        Point p = helper.translateToScreen(x, 0.95f);
+        SimpleDateFormat f = new SimpleDateFormat("MMM");
+        Date d = new Date(value);
+        String s = f.format(d);
+        int offset = helper.translateToScreen(0, 0.03f).y;
+        c.drawText(s, p.x, p.y+offset, textColor);
     }
 
     @Override
@@ -47,31 +68,23 @@ public class BasicAxis extends baseGraphDecoration{
         Point topLeft = helper.translateToScreen(0.1f, 0.05f);
         c.drawLine(bottomLeft.x, bottomLeft.y, topLeft.x, topLeft.y, axisColor);
 
+        int start = (int)axis.MinYAxis();
+        float step = (axis.MaxYAxis() - axis.MinYAxis()) / vMarks;
 
-        long step = (axis.MaxYAxis() - axis.MinYAxis()) / vMarks;
-        int screenStep = helper.translateToScreen (0, 0.9f / vMarks).y;
-        long current = axis.MinYAxis();
-        float currentScreen = bottomLeft.y;
         textColor.setTextAlign(Paint.Align.RIGHT);
-        do {
-            c.drawText(current+"", bottomLeft.x, currentScreen, textColor);
-            current += step;
-            currentScreen -= screenStep;
-        }while (current < axis.MaxYAxis() + step);
+        for (int i=1;i<vMarks;i++) {
+            drawAtYAxis(c, axis, helper, (int)(start + (step*i)));
+        }
+        Date minDate = new Date(axis.MinXAxis());
 
-        step = (axis.MaxXAxis() - axis.MinXAxis()) / hMarks;
-        screenStep = helper.translateToScreen(0.9f / hMarks, 0).x;
-        current = axis.MinXAxis();
-        currentScreen = bottomLeft.x;
-        textColor.setTextAlign(Paint.Align.LEFT);
+        Calendar calendar = new GregorianCalendar();
+        calendar.setTime(minDate);
+        while(calendar.getTimeInMillis() < axis.MaxXAxis())
+        {
+            drawAtXAxis(c, axis, helper, calendar.getTimeInMillis());
+            calendar.add(Calendar.MONTH, 1);
+        }
 
-        do {
-            String s = current+"";
-            textColor.getTextBounds(s, 0, s.length(), textBounds);
-            c.drawText(s, currentScreen, bottomLeft.y + textBounds.height(), textColor);
-            current += step;
-            currentScreen += screenStep;
-        }while (current < axis.MaxXAxis() + step);
     }
 }
 

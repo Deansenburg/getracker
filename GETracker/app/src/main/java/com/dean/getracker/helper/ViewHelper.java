@@ -20,7 +20,7 @@ public class ViewHelper {
     }
     public PointF translateFromScreen(int x, int y)
     {
-        return new PointF(x/width, y/height);
+        return new PointF((float)x/(float)width, (float)y/(float)height);
     }
 
 }
