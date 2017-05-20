@@ -13,9 +13,11 @@ import android.view.View;
 import com.dean.getracker.R;
 import com.dean.getracker.binder.geControllerBinder;
 import com.dean.getracker.helper.geDatabaseHelper;
-import com.dean.getracker.view.decorations.graph.BasicAxis;
+import com.dean.getracker.model.axisInformation;
 import com.dean.getracker.view.decorations.graph.IGraphDecoration;
-import com.dean.getracker.view.decorations.graph.basicBackground;
+import com.dean.getracker.view.decorations.graph.axis.AxisControlDecoration;
+import com.dean.getracker.view.decorations.graph.axis.HorizontalAxis;
+import com.dean.getracker.view.decorations.graph.axis.VerticalAxis;
 import com.dean.getracker.view.decorations.line.ILineDecoration;
 import com.dean.getracker.view.decorations.line.basicLine;
 import com.dean.getracker.view.decorations.node.INodeDecoration;
@@ -44,7 +46,14 @@ public class graphActivity extends ActionBarActivity implements View.OnTouchList
 
         view = (graphView)findViewById(R.id.view);
 
-        IGraphDecoration graphDecoration = new BasicAxis(new basicBackground(Color.WHITE, null));
+        AxisControlDecoration aControl;
+
+        IGraphDecoration graphDecoration =
+                aControl = new AxisControlDecoration(null);
+        //axis
+        axisInformation sharedAxis = new axisInformation(0, 0);
+        aControl.add(new VerticalAxis(sharedAxis, null));
+        aControl.add(new HorizontalAxis(sharedAxis, null));
 
         ILineDecoration lineDecoration = new basicLine(Color.BLACK, null);
 

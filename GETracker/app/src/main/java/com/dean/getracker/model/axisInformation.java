@@ -13,6 +13,13 @@ public class axisInformation {
         this.minY = minY;
         this.maxY = maxY;
     }
+    public axisInformation(long x, long y)
+    {
+        this.minX = x;
+        this.maxX = x;
+        this.minY = y;
+        this.maxY = y;
+    }
 
     public long MaxYAxis()
     {
@@ -31,6 +38,15 @@ public class axisInformation {
         return minX;
     }
 
-
+    public void setX(long x)
+    {
+        minX = x;
+        maxX = x;
+    }
+    public void setY(long y)
+    {
+        minY = y;
+        maxY = y;
+    }
 
 }

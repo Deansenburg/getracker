@@ -60,8 +60,6 @@ public class graphView extends View {
             geModel m = models.get(0);
             axisInformation axis = m.getAxisInfo();
 
-            //graph rendering
-            graphDecorator.render(canvas, axis, helper);
             //line rendering
             for (geModel model:models) {
                 PointF lastPoint = null;
@@ -84,6 +82,9 @@ public class graphView extends View {
                     nodeDecorator.renderNode(canvas, new PointF(x, y));
                 }
             }
+
+            //graph rendering
+            graphDecorator.render(canvas, axis, helper);
         }
     }
 }
