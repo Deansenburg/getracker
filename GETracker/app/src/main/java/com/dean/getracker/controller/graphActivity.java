@@ -48,7 +48,7 @@ public class graphActivity extends ActionBarActivity implements View.OnTouchList
         view = (graphView)findViewById(R.id.view);
 
         AxisControlDecoration aControl;
-        HorizontalAxis hAxis;
+        final HorizontalAxis hAxis;
 
         IGraphDecoration graphDecoration =
                 aControl = new AxisControlDecoration(null);
@@ -71,11 +71,17 @@ public class graphActivity extends ActionBarActivity implements View.OnTouchList
         view.setModel(controller.getModels());
         view.setOnTouchListener(this);
 
-        //updates to view offsets, etc
-        ViewHelper viewHelper = view.getHelper();
-        hAxis.updateHelper(viewHelper);
+        view.post(new Runnable() {
+            @Override
+            public void run() {
+                //updates to view offsets, etc
+                ViewHelper viewHelper = view.getHelper();
+                viewHelper.setBounds(view.getWidth(), view.getHeight());
+                hAxis.updateHelper(viewHelper);
 
-        view.invalidate();
+                view.invalidate();
+            }
+        });
     }
 
     @Override

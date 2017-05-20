@@ -92,6 +92,8 @@ public class HorizontalAxis extends Axis {
 
     public void updateHelper(ViewHelper h)
     {
-        h.addYOffset(height);
+        float height = h.translateToScreen(0, vPadPerc).y;
+        height += this.height;
+        h.addYOffset((int)height);
     }
 }
