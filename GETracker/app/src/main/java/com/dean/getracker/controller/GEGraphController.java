@@ -47,7 +47,7 @@ public class geGraphController {
         }
     }
 
-    private void update()
+    public void update()
     {
         int minValue = Integer.MAX_VALUE, maxValue = 0;
         long minDate = Long.MAX_VALUE, maxDate = 0;

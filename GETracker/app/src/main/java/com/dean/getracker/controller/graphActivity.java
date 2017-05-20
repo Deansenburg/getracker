@@ -63,6 +63,7 @@ public class graphActivity extends ActionBarActivity implements View.OnTouchList
         geControllerBinder controllerBinder = (geControllerBinder) graphBundle.getBinder(getString(R.string.extras_graphBinder));
 
         controller = controllerBinder.getService();
+        controller.update();
 
         view.setupRendering(graphDecoration, lineDecoration, nodeDecoration);
         view.setModel(controller.getModels());
