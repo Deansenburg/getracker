@@ -2,7 +2,9 @@ package com.dean.getracker.view.decorations.node;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.PointF;
+import android.graphics.Point;
+
+import com.dean.getracker.helper.ViewHelper;
 
 /**
  * Created by Dean on 03/05/17.
@@ -18,8 +20,9 @@ public class basicNode extends baseNodeDecoration {
     }
 
     @Override
-    public void renderNode(Canvas c, PointF p) {
-        super.renderNode(c, p);
+    public void renderNode(Canvas c, Point p1, ViewHelper helper) {
+        super.renderNode(c, p1, helper);
+        Point p = helper.getPoint(p1.x, p1.y);
         c.drawCircle(p.x, p.y, 5, nodeColor);
     }
 

@@ -1,7 +1,9 @@
 package com.dean.getracker.view.decorations.node;
 
 import android.graphics.Canvas;
-import android.graphics.PointF;
+import android.graphics.Point;
+
+import com.dean.getracker.helper.ViewHelper;
 
 /**
  * Created by Dean on 03/05/17.
@@ -14,10 +16,10 @@ public class baseNodeDecoration implements INodeDecoration {
         decoration = dec;
     }
     @Override
-    public void renderNode(Canvas c, PointF p) {
+    public void renderNode(Canvas c, Point p, ViewHelper helper) {
         if (decoration != null)
         {
-            decoration.renderNode(c, p);
+            decoration.renderNode(c, p, helper);
         }
     }
 }

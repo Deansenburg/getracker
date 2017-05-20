@@ -4,6 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.Rect;
 
 import com.dean.getracker.helper.ViewHelper;
 import com.dean.getracker.helper.normaliseHelper;
@@ -21,6 +22,9 @@ public class VerticalAxis extends Axis{
     int vMarks = 5;
 
     axisInformation axis;
+    long lastMaxY = -1;
+
+    int width;
 
     public VerticalAxis(axisInformation a, IGraphDecoration dec) {
         super(dec);
@@ -43,7 +47,8 @@ public class VerticalAxis extends Axis{
     private void drawAtYAxis(Canvas c, axisInformation axis, ViewHelper helper, int value)
     {
         float y = 1 - normaliseHelper.norm(value, axis.MaxYAxis(), axis.MinYAxis());
-        Point p = helper.translateToScreen(0.1f, y);
+        Point p = helper.translateToScreen(0, y);
+        p = helper.getPoint(p.x, p.y);
         c.drawText(value+"", p.x, p.y, textColor);
     }
 
@@ -51,25 +56,34 @@ public class VerticalAxis extends Axis{
     public void render(Canvas c, axisInformation axis, ViewHelper helper) {
         super.render(c, axis, helper);
 
-        Point bottomLeft = helper.translateToScreen(0.1f, 0.95f);
+        Point bottomLeft = helper.translateToScreen(0, 0.95f);
 
-        Point topLeft = helper.translateToScreen(0.1f, 0.05f);
+        Point topLeft = helper.translateToScreen(0, 0.05f);
         int bottomAxis = (int) this.axis.MaxYAxis();
 
-        c.drawRect(0, 0, bottomLeft.x, bottomAxis, fillColor);
+        int left = width;
 
-        c.drawLine(bottomLeft.x, bottomAxis, topLeft.x, topLeft.y, axisColor);
+        c.drawRect(0, 0, left, bottomAxis, fillColor);
+
+        c.drawLine(left, bottomAxis, left, topLeft.y, axisColor);
 
         int start = (int)axis.MinYAxis();
         float step = (axis.MaxYAxis() - axis.MinYAxis()) / vMarks;
 
-        textColor.setTextAlign(Paint.Align.RIGHT);
+        textColor.setTextAlign(Paint.Align.LEFT);
         for (int i=1;i<vMarks;i++) {
             drawAtYAxis(c, axis, helper, (int)(start + (step*i)));
         }
     }
     @Override
-    void updateAxis(ViewHelper helper) {
-
+    void updateAxis(axisInformation a, ViewHelper helper) {
+        if (lastMaxY != a.MaxYAxis()) {
+            Rect bounds = new Rect();
+            String s = a.MaxYAxis() + "";
+            textColor.getTextBounds(s, 0, s.length(), bounds);
+            width = bounds.width();
+            lastMaxY = a.MaxYAxis();
+            this.axis.setX(width);
+        }
     }
 }

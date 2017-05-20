@@ -12,6 +12,7 @@ import android.view.View;
 
 import com.dean.getracker.R;
 import com.dean.getracker.binder.geControllerBinder;
+import com.dean.getracker.helper.ViewHelper;
 import com.dean.getracker.helper.geDatabaseHelper;
 import com.dean.getracker.model.axisInformation;
 import com.dean.getracker.view.decorations.graph.IGraphDecoration;
@@ -47,13 +48,14 @@ public class graphActivity extends ActionBarActivity implements View.OnTouchList
         view = (graphView)findViewById(R.id.view);
 
         AxisControlDecoration aControl;
+        HorizontalAxis hAxis;
 
         IGraphDecoration graphDecoration =
                 aControl = new AxisControlDecoration(null);
         //axis
         axisInformation sharedAxis = new axisInformation(0, 0);
         aControl.add(new VerticalAxis(sharedAxis, null));
-        aControl.add(new HorizontalAxis(sharedAxis, null));
+        aControl.add(hAxis = new HorizontalAxis(sharedAxis, null));
 
         ILineDecoration lineDecoration = new basicLine(Color.BLACK, null);
 
@@ -68,6 +70,11 @@ public class graphActivity extends ActionBarActivity implements View.OnTouchList
         view.setupRendering(graphDecoration, lineDecoration, nodeDecoration);
         view.setModel(controller.getModels());
         view.setOnTouchListener(this);
+
+        //updates to view offsets, etc
+        ViewHelper viewHelper = view.getHelper();
+        hAxis.updateHelper(viewHelper);
+
         view.invalidate();
     }
 

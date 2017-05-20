@@ -64,17 +64,17 @@ public class HorizontalAxis extends Axis {
     public void render(Canvas c, axisInformation axis, ViewHelper helper) {
         super.render(c, axis, helper);
 
-        Point bottomLeft = helper.translateToScreen(0.1f, 0);
         Point bottomRight = helper.translateToScreen(0.95f, 0);
 
-        c.drawLine(bottomLeft.x, this.axis.MinYAxis(), bottomRight.x, this.axis.MinYAxis(), axisColor);
+        int left = (int) this.axis.MaxXAxis();
+
+        c.drawLine(left, this.axis.MinYAxis(), bottomRight.x, this.axis.MinYAxis(), axisColor);
 
         Date minDate = new Date(axis.MinXAxis());
 
         Calendar calendar = new GregorianCalendar();
         calendar.setTime(minDate);
         calendar.set(Calendar.DAY_OF_MONTH, 1);
-        SimpleDateFormat f = new SimpleDateFormat("dd/MM/yyyy");
 
         while(calendar.getTimeInMillis() < axis.MaxXAxis())
         {
@@ -84,9 +84,14 @@ public class HorizontalAxis extends Axis {
     }
 
     @Override
-    public void updateAxis(ViewHelper helper) {
+    public void updateAxis(axisInformation a, ViewHelper helper) {
         float height = helper.translateToScreen(0, 1 - vPadPerc).y;
         height -= this.height;
         this.axis.setY((int) height);
+    }
+
+    public void updateHelper(ViewHelper h)
+    {
+        h.addYOffset(height);
     }
 }

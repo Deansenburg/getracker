@@ -1,6 +1,7 @@
 package com.dean.getracker.view.decorations.graph.axis;
 
 import com.dean.getracker.helper.ViewHelper;
+import com.dean.getracker.model.axisInformation;
 import com.dean.getracker.view.decorations.graph.IGraphDecoration;
 import com.dean.getracker.view.decorations.graph.baseGraphDecoration;
 
@@ -13,5 +14,5 @@ public abstract class Axis extends baseGraphDecoration {
         super(dec);
     }
 
-    abstract void updateAxis(ViewHelper helper);
+    abstract void updateAxis(axisInformation a, ViewHelper helper);
 }

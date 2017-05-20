@@ -30,7 +30,7 @@ public class AxisControlDecoration extends baseGraphDecoration {
         super.render(c, axis, helper);
         for (Axis a:axisList)
         {
-            a.updateAxis(helper);
+            a.updateAxis(axis, helper);
         }
         for (Axis a:axisList)
         {

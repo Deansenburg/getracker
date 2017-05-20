@@ -2,6 +2,7 @@ package com.dean.getracker.view;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Point;
 import android.graphics.PointF;
 import android.util.AttributeSet;
 import android.view.View;
@@ -25,6 +26,8 @@ public class graphView extends View {
     INodeDecoration nodeDecorator;
     ILineDecoration lineDecorator;
 
+    ViewHelper helper;
+
     public graphView(Context context) {
         super(context);
     }
@@ -44,7 +47,13 @@ public class graphView extends View {
     {
         if (this.models == null) {
             this.models = models;
+            helper = new ViewHelper();
         }
+    }
+
+    public ViewHelper getHelper()
+    {
+        return helper;
     }
 
     @Override
@@ -55,21 +64,21 @@ public class graphView extends View {
             int width = getWidth();
             int height = getHeight();
 
-            ViewHelper helper = new ViewHelper(width, height);
+            helper.setBounds(width, height);
 
             geModel m = models.get(0);
             axisInformation axis = m.getAxisInfo();
 
             //line rendering
             for (geModel model:models) {
-                PointF lastPoint = null;
+                Point lastPoint = null;
                 List<PointF> points = model.getPoints();
                 for (int i = 0; i < points.size(); i++) {
                     int x = (int) (width * points.get(i).x);
                     int y = (int) (height * points.get(i).y);
-                    PointF currentPoint = new PointF(x, y);
+                    Point currentPoint = new Point(x, y);
                     if (lastPoint != null) {
-                        lineDecorator.renderLine(canvas, currentPoint, lastPoint);
+                        lineDecorator.renderLine(canvas, currentPoint, lastPoint, helper);
                     }
                     lastPoint = currentPoint;
                 }
@@ -79,7 +88,7 @@ public class graphView extends View {
                 for (PointF p : model.getPoints()) {
                     int x = (int) (width * p.x);
                     int y = (int) (height * p.y);
-                    nodeDecorator.renderNode(canvas, new PointF(x, y));
+                    nodeDecorator.renderNode(canvas, new Point(x, y), helper);
                 }
             }
 
